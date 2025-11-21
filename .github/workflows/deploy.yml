@@ -5,11 +5,19 @@ on:
     branches:
       - main
     paths:
-      - "index.html"   # Chỉ chạy khi file index.html thay đổi
+      - "index.html"
+
+permissions:             # 🔥 BẮT BUỘC
+  contents: read
+  pages: write
+  id-token: write        # 🔥 Quan trọng nhất để sửa lỗi
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy-pages.outputs.page_url }}
 
     steps:
       - name: Checkout code
@@ -21,7 +29,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "."   # deploy toàn repo
+          path: "."
 
       - name: Deploy to GitHub Pages
+        id: deploy-pages
         uses: actions/deploy-pages@v4
